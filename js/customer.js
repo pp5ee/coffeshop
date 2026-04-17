@@ -42,6 +42,7 @@ class Customer {
     this.bottom   = startBottom;
     this.avatar   = AVATARS[Math.floor(Math.random() * AVATARS.length)];
     this.name     = `Cust. ${this.id}`;
+    this._wasServedHappy = false;   // track service outcome
 
     this._el = this._createElement();
   }
@@ -96,25 +97,29 @@ class Customer {
 
   serve() {
     this.state = CUSTOMER_STATE.SERVED;
+    this._wasServedHappy = true;
     this._el.classList.add('leaving');
     // Remove element after animation ends
     this._el.addEventListener('animationend', () => this._el.remove(), { once: true });
     // Fallback removal
     setTimeout(() => { if (this._el.parentNode) this._el.remove(); }, 800);
-    this.state = CUSTOMER_STATE.DONE;
+    // Don't set to DONE here - let manager handle cleanup
   }
 
   leaveUnhappy() {
     if (this.state === CUSTOMER_STATE.DONE) return;
     this.state = CUSTOMER_STATE.LEAVING_UNHAPPY;
+    this._wasServedHappy = false;
     this._el.classList.add('leaving');
     this._el.addEventListener('animationend', () => this._el.remove(), { once: true });
     setTimeout(() => { if (this._el.parentNode) this._el.remove(); }, 800);
-    this.state = CUSTOMER_STATE.DONE;
+    // Don't set to DONE here - let manager handle cleanup
   }
 
   isDone() {
-    return this.state === CUSTOMER_STATE.DONE;
+    return this.state === CUSTOMER_STATE.DONE ||
+           this.state === CUSTOMER_STATE.SERVED ||
+           this.state === CUSTOMER_STATE.LEAVING_UNHAPPY;
   }
 
   /* ── Private: update patience bar appearance ────────────── */
@@ -189,15 +194,18 @@ class CustomerManager {
     this._customers.forEach(c => c.update(dt));
 
     // Remove done customers and fire callbacks
-    const leaving = this._customers.filter(c => c.isDone());
+    const leaving = this._customers.filter(c => c.state === CUSTOMER_STATE.SERVED || c.state === CUSTOMER_STATE.LEAVING_UNHAPPY);
     leaving.forEach(c => {
-      const wasServed = c.state !== CUSTOMER_STATE.LEAVING_UNHAPPY &&
-                        c.state === CUSTOMER_STATE.DONE &&
-                        c.patienceLeft > 0;
-      // Note: by the time isDone() is true state is always DONE;
-      // we track happiness via a flag set during serve()/leaveUnhappy()
+      // Set final state and call callback once
+      c.state = CUSTOMER_STATE.DONE;
+      this._onCustomerLeft(c._wasServedHappy, c._wasServedHappy ? (DrinkSystem.getDrink(c.drinkId)?.price ?? 0) : 0);
     });
-    this._customers = this._customers.filter(c => !c.isDone());
+    this._customers = this._customers.filter(c => c.state !== CUSTOMER_STATE.DONE);
+
+    // Compact queue positions after departures
+    if (leaving.length > 0) {
+      this._repositionQueue();
+    }
 
     // Promote first queuing customer to counter if counter is free
     if (!this._counterOccupied) {
@@ -215,6 +223,11 @@ class CustomerManager {
    * @returns {{ correct: boolean, earn: number }}
    */
   serveCounterCustomer(drinkId) {
+    // Validate drinkId before proceeding
+    if (!drinkId || !DrinkSystem.getDrink(drinkId)) {
+      return { correct: false, earn: 0 };
+    }
+
     const customer = this._getCounterCustomer();
     if (!customer) return { correct: false, earn: 0 };
 
@@ -222,14 +235,10 @@ class CustomerManager {
     const earn    = correct ? (DrinkSystem.getDrink(drinkId)?.price ?? 0) : 0;
 
     if (correct) {
-      customer._wasServedHappy = true;
       customer.serve();
-      this._onCustomerLeft(true, earn);
     } else {
       // Wrong drink — still serve but no money
-      customer._wasServedHappy = false;
       customer.serve();
-      this._onCustomerLeft(false, 0);
     }
 
     this._counterOccupied = false;
@@ -248,6 +257,12 @@ class CustomerManager {
 
   /* ── Private helpers ────────────────────────────────────── */
   _spawnCustomer() {
+    // Enforce queue capacity (max 5 customers in queue)
+    const queueingCount = this._customers.filter(c => c.state === CUSTOMER_STATE.QUEUING).length;
+    if (queueingCount >= 5) {
+      return; // Queue is full, don't spawn
+    }
+
     const sceneEl = document.getElementById('shop-scene');
     const sceneW  = sceneEl ? sceneEl.offsetWidth  : 600;
     const sceneH  = sceneEl ? sceneEl.offsetHeight : 400;

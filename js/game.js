@@ -161,6 +161,11 @@ class Game {
   _handleServe(drinkId) {
     if (!this._customers.isCounterOccupied()) return;
 
+    // Capture expected drink BEFORE serving the customer
+    const counterCustomer = this._customers.getCounterCustomer();
+    const expectedDrink = DrinkSystem.getDrink(counterCustomer?.drinkId ?? '');
+    const expectedDrinkName = expectedDrink?.name ?? 'unknown';
+
     const { correct, earn } = this._customers.serveCounterCustomer(drinkId);
     const drinkName = DrinkSystem.getDrink(drinkId)?.name ?? drinkId;
 
@@ -171,11 +176,8 @@ class Game {
       this._ui.setServed(this._served);
       this._ui.showFeedback(`✅ ${drinkName} — +$${earn}! Customer happy!`, 'success');
     } else {
-      const correctDrink = DrinkSystem.getDrink(
-        this._customers.getCounterCustomer()?.drinkId ?? ''
-      );
-      // Customer already leaving from wrong serve; just log feedback
-      this._ui.showFeedback(`❌ Wrong drink! They wanted a ${correctDrink?.name ?? '?'}.`, 'error');
+      // Customer already leaving from wrong serve; use captured expected drink
+      this._ui.showFeedback(`❌ Wrong drink! They wanted a ${expectedDrinkName}.`, 'error');
     }
 
     this._ui.clearOrder();
