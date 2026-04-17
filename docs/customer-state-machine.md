@@ -105,8 +105,8 @@ double-transitions when the patience timer fires concurrently with manager clean
 - **Correct-drink path:** `serveCounterCustomer(drinkId)` compares the served `drinkId`
   against `customer.drinkId`. On match, `customer.serve()` is called; `_wasServedHappy`
   is set to `true`; money (`DrinkSystem.getDrink(drinkId).price`) is returned to `Game`.
-- **Wrong-drink path:** On mismatch the customer still calls `customer.serve()` —
-  they leave immediately — but `earn` is returned as `0`. The `_wasServedHappy` flag
+- **Wrong-drink path:** On mismatch the customer calls `customer.leaveUnhappy()` —
+  they leave immediately — and `earn` is returned as `0`. The `_wasServedHappy` flag
   is **not** set (defaults `false`), so `_handleCustomerLeft(false)` increments the
   lost counter and shows the red feedback banner.
 
