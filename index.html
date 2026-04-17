@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixel Coffee Shop</title>
+  <link rel="stylesheet" href="css/game.css" />
+</head>
+<body>
+  <!-- ========================================================
+       Root container — all screens are children of this element.
+       JavaScript swaps the 'data-screen' attribute to show/hide
+       the correct screen without re-rendering the DOM.
+  ======================================================== -->
+  <div id="game-root" data-screen="start">
+
+    <!-- ── START SCREEN ──────────────────────────────────── -->
+    <section id="screen-start" class="screen" role="main" aria-label="Start screen">
+      <div class="start-card">
+        <div class="start-logo" aria-hidden="true">
+          <span class="logo-icon">☕</span>
+        </div>
+        <h1 class="start-title">Pixel Coffee Shop</h1>
+        <p class="start-subtitle">A cozy one-day barista sim</p>
+
+        <ul class="instructions" aria-label="How to play">
+          <li>
+            <span class="instr-icon" aria-hidden="true">👋</span>
+            Customers enter and join the queue
+          </li>
+          <li>
+            <span class="instr-icon" aria-hidden="true">☕</span>
+            Click the correct drink button before their patience runs out
+          </li>
+          <li>
+            <span class="instr-icon" aria-hidden="true">💰</span>
+            Earn money for every happy customer
+          </li>
+          <li>
+            <span class="instr-icon" aria-hidden="true">🌙</span>
+            Survive the full day to see your final score
+          </li>
+        </ul>
+
+        <button id="btn-start" class="btn btn-primary" type="button">
+          Open the Shop
+        </button>
+      </div>
+    </section>
+
+    <!-- ── GAME SCREEN ───────────────────────────────────── -->
+    <section id="screen-game" class="screen" role="main" aria-label="Game screen" hidden>
+
+      <!-- Top HUD -->
+      <header id="hud" class="hud" role="status" aria-live="polite">
+        <div class="hud-item" aria-label="Money earned">
+          <span class="hud-icon" aria-hidden="true">💰</span>
+          $<span id="hud-money">0</span>
+        </div>
+        <div class="hud-item" aria-label="Customers served">
+          <span class="hud-icon" aria-hidden="true">🧾</span>
+          <span id="hud-served">0</span> served
+        </div>
+        <div class="hud-item hud-timer" aria-label="Time remaining">
+          <span class="hud-icon" aria-hidden="true">⏱</span>
+          <span id="hud-time">60</span>s
+        </div>
+      </header>
+
+      <!-- Main game area -->
+      <div id="game-area" class="game-area">
+
+        <!-- Shop scene (customers rendered here by JS) -->
+        <div id="shop-scene" class="shop-scene" aria-label="Coffee shop interior">
+
+          <!-- Visual layer: decorative shop background tiles -->
+          <div class="scene-bg" aria-hidden="true">
+            <div class="scene-wall"></div>
+            <div class="scene-floor"></div>
+            <!-- Counter -->
+            <div class="scene-counter">
+              <span class="counter-label">Counter</span>
+            </div>
+            <!-- Door -->
+            <div class="scene-door" aria-label="Shop door">
+              <span class="door-label">🚪</span>
+            </div>
+          </div>
+
+          <!-- Dynamic layer: customer sprites injected by CustomerManager -->
+          <div id="customer-layer" class="customer-layer" aria-label="Customers"></div>
+
+          <!-- Queue position markers (decorative, updated by QueueSystem) -->
+          <div id="queue-markers" class="queue-markers" aria-hidden="true"></div>
+        </div>
+
+        <!-- Right-side panel: active order + drink buttons -->
+        <aside id="service-panel" class="service-panel" aria-label="Service panel">
+          <div class="panel-section">
+            <h2 class="panel-heading">Current Order</h2>
+            <div id="order-display" class="order-display" aria-live="polite" aria-atomic="true">
+              <span class="order-placeholder">No customer at counter</span>
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <h2 class="panel-heading">Prepare Drink</h2>
+            <!-- Drink buttons rendered by DrinkSystem -->
+            <div id="drink-buttons" class="drink-buttons" role="group" aria-label="Drink options">
+              <!-- Populated by js/drinks.js -->
+            </div>
+          </div>
+
+          <div class="panel-section">
+            <h2 class="panel-heading">Feedback</h2>
+            <div id="feedback-display" class="feedback-display" aria-live="assertive" aria-atomic="true">
+              <span class="feedback-placeholder">Waiting for customers…</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ── END-OF-DAY SUMMARY SCREEN ─────────────────────── -->
+    <section id="screen-summary" class="screen" role="main" aria-label="End of day summary" hidden>
+      <div class="summary-card">
+        <h1 class="summary-title">End of Day!</h1>
+        <p class="summary-subtitle">Here's how your shift went</p>
+
+        <div class="summary-stats" role="list" aria-label="Day statistics">
+          <div class="stat-row" role="listitem">
+            <span class="stat-label">Total earned</span>
+            <span class="stat-value" id="summary-money">$0</span>
+          </div>
+          <div class="stat-row" role="listitem">
+            <span class="stat-label">Customers served</span>
+            <span class="stat-value" id="summary-served">0</span>
+          </div>
+          <div class="stat-row" role="listitem">
+            <span class="stat-label">Customers lost</span>
+            <span class="stat-value" id="summary-lost">0</span>
+          </div>
+          <div class="stat-row stat-row--highlight" role="listitem">
+            <span class="stat-label">Final score</span>
+            <span class="stat-value" id="summary-score">0</span>
+          </div>
+          <div class="stat-row" role="listitem">
+            <span class="stat-label">High score</span>
+            <span class="stat-value" id="summary-highscore">0</span>
+          </div>
+        </div>
+
+        <div class="summary-message" id="summary-message" aria-live="polite"></div>
+
+        <div class="summary-actions">
+          <button id="btn-play-again" class="btn btn-primary" type="button">
+            Play Again
+          </button>
+          <button id="btn-back-start" class="btn btn-secondary" type="button">
+            Main Menu
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /#game-root -->
+
+  <!-- ── Scripts (loaded in dependency order) ─────────────── -->
+  <script src="js/drinks.js"></script>
+  <script src="js/customer.js"></script>
+  <script src="js/queue.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
