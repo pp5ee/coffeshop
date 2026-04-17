@@ -1,95 +1,100 @@
 # Pixel Coffee Shop
 
-A cozy browser-based coffee shop simulation game with a pixel-art aesthetic. Serve customers before their patience runs out, earn money, and survive a full day's shift!
+A pixel-art coffee shop simulation game built with vanilla JavaScript. Manage your coffee shop by serving customers their favorite drinks before their patience runs out!
 
-## Prerequisites
+## Features
 
-- Any modern web browser (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
-- No build tools, no package manager, no server required
+- **Pixel-art aesthetic** with crisp, chunky UI elements and smooth animations
+- **Customer management** with queueing system, visual avatars, and patience tracking
+- **Drink preparation** with 5 different beverage types (☕ Coffee, 🍵 Tea, 🥤 Smoothie, 🥛 Latte, 🍫 Hot Chocolate)
+- **Time-based gameplay** with 60-second rounds and scoring system
+- **High score tracking** with localStorage persistence
+- **Accessible design** with ARIA labels, keyboard navigation, and screen reader support
+- **Responsive layout** that works on desktop and mobile devices
 
-## Installation
+## Gameplay
 
-```bash
-# Clone the repository
-git clone <repo-url>
-cd pixel-coffee-shop
+1. **Start Screen** - Click "Start Serving" to begin your shift
+2. **Game Screen** - Serve customers by matching their drink orders
+3. **Summary Screen** - View your performance metrics and earnings
+
+## How to Play
+
+1. **Start the game** by clicking the "Start Serving" button
+2. **Customers will appear** and queue up automatically every 5 seconds
+3. **Monitor the queue** - customers move from right to left toward the counter
+4. **Read orders** - when a customer reaches the counter, their drink order appears in the service panel
+5. **Serve drinks** - click the corresponding drink button to serve them
+6. **Manage patience** - each customer has a patience meter (green → yellow → red)
+7. **Earn money** - receive payment for each correct order served
+8. **Game ends** after 60 seconds - view your final score and performance
+
+## Controls
+
+- **Mouse/Touch**: Click drink buttons to serve customers
+- **Keyboard**: Tab through buttons and press Enter/Space to select
+
+## Scoring System
+
+- **Correct Order**: +$3-$5 (varies by drink type)
+- **Incorrect Order**: $0 earned
+- **Customer Leaves**: $0 earned (patience runs out)
+
+## Drink Types & Prices
+
+- ☕ **Coffee**: $3 - Classic black coffee
+- 🍵 **Tea**: $3 - Herbal tea selection
+- 🥤 **Smoothie**: $4 - Fruit smoothie blend
+- 🥛 **Latte**: $4 - Creamy milk coffee
+- 🍫 **Hot Chocolate**: $5 - Rich chocolate drink
+
+## Technical Details
+
+Built with vanilla JavaScript using modern web technologies:
+- **ES6 classes** for modular game systems (Game, Customer, DrinkSystem, etc.)
+- **CSS Grid/Flexbox** for responsive, pixel-perfect layouts
+- **CSS custom properties** for consistent theming and easy customization
+- **LocalStorage API** for high score persistence between sessions
+- **CSS animations** for smooth customer movements and visual feedback
+- **Accessibility features** including ARIA labels and keyboard navigation
+
+## File Structure
+
 ```
-
-That's it — no `npm install` or compilation step needed.
-
-## Usage
-
-Open `index.html` directly in your browser:
-
-```bash
-# macOS
-open index.html
-
-# Linux
-xdg-open index.html
-
-# Windows (PowerShell)
-start index.html
-```
-
-Or drag `index.html` onto any browser window.
-
-### How to play
-
-1. Click **Open the Shop** on the start screen.
-2. Watch customers enter from the door on the right and join the queue.
-3. When a customer reaches the counter, their drink order appears in the **Current Order** panel.
-4. Click the correct **drink button** in the service panel before the customer's patience bar empties.
-5. Earn money for each correct order; wrong drinks still clear the customer but earn nothing.
-6. Survive the 60-second day and review your end-of-day summary!
-
-## Configuration
-
-Game constants live at the top of `js/game.js` in the `CONFIG` object:
-
-```js
-const CONFIG = {
-  dayDurationMs:    60_000,  // length of one in-game day (ms)
-  spawnIntervalMs:   5_000,  // how often a new customer spawns (ms)
-  patienceMs:       12_000,  // default customer patience duration (ms)
-  highScoreKey: 'pixelCoffeeShop_highscore',  // localStorage key
-};
-```
-
-Adjust these values to make the game easier or harder.
-
-## Project Structure
-
-```
-pixel-coffee-shop/
-├── index.html          # Entry point — all three screens (start / game / summary)
+├── index.html          # Main HTML file with all game screens
 ├── css/
-│   └── game.css        # Pixel-art styling, animations, layout
+│   └── game.css        # Complete pixel-art styling system with animations
 ├── js/
-│   ├── drinks.js       # Drink catalogue (DRINKS array) + DrinkSystem class
-│   ├── customer.js     # Customer entity, state machine + CustomerManager
-│   ├── queue.js        # Visual queue-position markers (QueueSystem)
-│   ├── ui.js           # Screen transitions, HUD, feedback (UIManager)
-│   └── game.js         # Game orchestration, main loop, high-score storage
-├── docs/
-│   └── plan.md         # Implementation plan
-└── requirements/
-    └── draft.md        # Original design brief
+│   ├── game.js         # Main game engine, state management, and core loop
+│   ├── drinks.js       # Drink system with 5 beverage types and pricing
+│   ├── customer.js     # Customer entity class and CustomerManager system
+│   ├── queue.js        # Queue position management and visual markers
+│   └── ui.js           # UI management, screen transitions, and feedback
+└── README.md           # Complete game documentation
 ```
 
-### Architecture overview
+## Getting Started
 
-```
-Game (game.js)
- ├── UIManager      — switches screens, updates HUD, shows feedback
- ├── DrinkSystem    — renders drink buttons, handles "serve" clicks
- ├── CustomerManager— spawns & updates customers, fires callbacks
- └── QueueSystem    — draws decorative queue markers on the scene
-```
+1. **Download or clone** the repository
+2. **Open `index.html`** in your web browser
+3. **Start playing** - no build process or dependencies required!
 
-Script load order (bottom of `index.html`) ensures each class is
-defined before the one that depends on it:
+## Browser Compatibility
 
-```
-drinks.js → customer.js → queue.js → ui.js → game.js
-```
+Works in all modern browsers that support:
+- ES6 modules and classes
+- CSS Grid and Flexbox
+- CSS custom properties (variables)
+- LocalStorage API
+
+## Development
+
+The game is built with clean, modular JavaScript that's easy to extend:
+- Add new drink types in `js/drinks.js`
+- Modify customer behavior in `js/customer.js`
+- Customize visuals in `css/game.css`
+- Extend gameplay mechanics in `js/game.js`
+
+## License
+
+Open source - feel free to modify and extend for your own projects!
