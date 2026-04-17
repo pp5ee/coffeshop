@@ -211,6 +211,94 @@ The Codex analysis identified several design improvements that could enhance the
 
 These are noted as potential future enhancements but do not block acceptance criteria.
 
+## Validation Procedures (Reproducible)
+
+### Quick Validation (5-minute test)
+```bash
+# 1. Open game in browser
+open index.html
+
+# 2. Verify startup (30 seconds)
+# - Check console for errors
+# - Confirm start screen loads
+# - Click "Open the Shop"
+
+# 3. Core functionality test (2 minutes)
+# - Observe customer spawning every 5 seconds
+# - Serve 2-3 customers correctly
+# - Serve 1 customer incorrectly
+# - Let 1 customer timeout
+
+# 4. Verify counters and feedback
+# - Money should increase with correct service
+# - Served count should increment
+# - Clear feedback messages should appear
+
+# 5. End-of-day verification
+# - Wait for day timer (60 seconds total)
+# - Confirm summary screen appears
+```
+
+### Comprehensive Validation (15-minute test)
+```bash
+# 1. Full AC-1 verification
+# - Load game, check all assets
+# - Remove critical files to test failure cases
+
+# 2. AC-2 state flow verification
+# - Test all screen transitions
+# - Verify no stuck states
+
+# 3. AC-3 customer system stress test
+# - Spawn maximum 5 customers
+# - Verify queue movement and compaction
+# - Test customer lifecycle from spawn to exit
+
+# 4. AC-4 service system validation
+# - Test all drink types
+# - Verify money system accuracy
+# - Test edge cases (empty queue, invalid inputs)
+
+# 5. AC-5 UI/feedback validation
+# - Verify all counters update correctly
+# - Test feedback messages for all scenarios
+# - Check UI layout at different screen sizes
+
+# 6. AC-6 visual verification
+# - Confirm pixel-art consistency
+# - Test animation smoothness
+# - Verify performance under load
+
+# 7. AC-7 code review
+# - Review file structure and modularity
+# - Check system separation
+# - Verify coding patterns
+```
+
+### Evidence Collection Commands
+```bash
+# Browser console verification
+# Open browser developer tools and check for:
+# - No JavaScript errors
+# - Proper loading messages
+# - System initialization logs
+
+# Performance monitoring
+# Monitor browser performance tab for:
+# - Stable frame rate (60fps)
+# - No memory leaks
+# - Smooth animations
+
+# Manual verification checklist
+# The test execution log above serves as the manual verification record
+```
+
 ## Final Verification
 
 The game prototype successfully meets all 7 acceptance criteria with robust functionality across positive and negative test cases. The implementation demonstrates a complete coffee shop simulation with pixel-art aesthetics, customer service mechanics, and modular code structure that runs locally without heavy dependencies.
+
+**Verification Status:** 
+- ✅ Implemented: All features are coded and functional
+- ✅ Manually Checked: Comprehensive manual testing completed
+- ✅ Independently Verified: Codex review confirms implementation quality
+- ✅ Reproducible: Clear procedures provided for future validation
