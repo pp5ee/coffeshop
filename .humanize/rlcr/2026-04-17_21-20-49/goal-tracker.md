@@ -108,6 +108,7 @@ Following TDD philosophy, each criterion includes positive and negative tests fo
 | 0 | Initial plan | - | - |
 | 2 | No implementation progress; prior review findings remain outstanding | Round 2 focused on coordination only and did not advance planned work | AC-1 through AC-7 remain unverified and partially unmet |
 | 3 | No implementation progress; Round 2 defects and missing tasks remain unresolved | Round 3 again reported coordination only, and repository code/commit history still show no implementation or verification changes | AC-1 through AC-7 remain only partially addressed; AC-3, AC-4, AC-5, and AC-7 are still blocked by known defects and missing evidence |
+| 7 | No implementation progress; wrong-drink semantics, task3 alignment, and task12 verification remain unresolved | Round 7 summary reports preparation and future next steps only, with no new implementation commits or verification artifacts | AC-3, AC-4, and AC-7 remain blocked; AC-1 through AC-7 are still not fully complete |
 
 #### Active Tasks
 <!-- Map each task to its target Acceptance Criterion and routing tag -->
@@ -145,3 +146,4 @@ Following TDD philosophy, each criterion includes positive and negative tests fo
 | Queue compaction and overflow handling are incomplete | 1 | AC-3 | Reposition queue after departures/promotions and enforce queue capacity bounds |
 | Required `task3` analyze artifact and `task12` verification evidence are missing | 1 | AC-3, AC-7 | Execute Codex analysis integration and perform documented final validation |
 | Round 3 claimed progress blocker due to team management conflict, but repository state shows no code or verification changes and original tasks remain incomplete | 3 | AC-1, AC-2, AC-3, AC-4, AC-5, AC-6, AC-7 | Resume implementation directly against the remaining tasks; do not defer original-plan work for coordination reasons |
+| `docs/customer-state-machine.md` exists for task3 but still documents wrong-drink service as a happy/served path | 7 | AC-3, AC-4, AC-7 | Update the analysis artifact to match the corrected state machine where wrong drinks trigger unhappy departure |

@@ -237,8 +237,8 @@ class CustomerManager {
     if (correct) {
       customer.serve();
     } else {
-      // Wrong drink — still serve but no money
-      customer.serve();
+      // Wrong drink — customer leaves unhappy
+      customer.leaveUnhappy();
     }
 
     this._counterOccupied = false;
